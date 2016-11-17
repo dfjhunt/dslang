@@ -7,7 +7,6 @@ import java.util.function.Function;
 
 import dslang.monad.Monad;
 import dslang.monad.MonadT;
-import dslang.monad.wrapper.OptionM;
 
 
 public class ListT<M, T> implements MonadT<ListT<M, ?>, T> {
@@ -80,19 +79,5 @@ public class ListT<M, T> implements MonadT<ListT<M, ?>, T> {
         });
 
         return new ListT<M, U>(m);
-    }
-
-    public static void main(String args[]) {
-       
-        ListT<OptionM<?>, Integer> listT = new ListT<OptionM<?>, Integer>(OptionM.sunit(Arrays.asList(1, 2, 3)));
-       
-       Function<Integer, List<Integer>> f = x->Arrays.asList(x, 2*x);
-       
-       Function<Integer, ListT<OptionM<?>, Integer>> f2 = f.andThen(OptionM::sunit).andThen(ListT::new);
-       
-       List<Integer> l = OptionM.unwrap(listT.flatMap(f2).run()).get();
-       
-       l.forEach(System.out::println);
-       
     }
 }
