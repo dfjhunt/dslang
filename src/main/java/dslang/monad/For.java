@@ -9,12 +9,12 @@ import dslang.util.function.Fluent;
 import dslang.util.function.TriFunction;
 
 public class For {
-    static public <M, A, B, C> Monad<M,C> of(Monad<M, A> a, Monad<M, B> b, BiFunction<A, B, C> func) {
-        return a.flatMap(av -> b.map(bv -> func.apply(av, bv)));
+    static public <M, A, B, C, N extends Monad<M,C>> N of(Monad<M, A> a, Monad<M, B> b, BiFunction<A, B, C> func) {
+        return (N)a.flatMap(av -> b.map(bv -> func.apply(av, bv)));
     }
 
-    static public <M, A, B, C, D> Monad<M,D> of(Monad<M, A> a, Monad<M, B> b, Monad<M, C> c, TriFunction<A, B, C, D> func) {
-        return a.flatMap(av -> b.flatMap(bv -> c.map(cv -> func.apply(av, bv, cv))));
+    static public <M, A, B, C, D, N extends Monad<M,D>> N of(Monad<M, A> a, Monad<M, B> b, Monad<M, C> c, TriFunction<A, B, C, D> func) {
+        return (N)a.flatMap(av -> b.flatMap(bv -> c.map(cv -> func.apply(av, bv, cv))));
     }
     
     static public void main(String args[]){

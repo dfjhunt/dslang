@@ -1,6 +1,5 @@
 package dslang.monad.transformer;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import dslang.monad.Monad;
@@ -11,7 +10,7 @@ import dslang.monad.wrapper.OptionM;
 import dslang.util.function.Fluent;
 
 
-public class TryT<M, T> implements MonadT<TryT<M, ?>, T>{
+public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
 
     Monad<M, Try<T>> myMonad = null;
 
@@ -37,7 +36,11 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, T>{
     }
 
     
-    public M lift(){
+    public Monad<M, Monad<Try<?>, T>> lift(){
+        return myMonad.map(x->(Monad<Try<?>, T>)x);
+    }
+    
+    public M liftM(){
         return myMonad.getM();
     }
     
@@ -80,7 +83,7 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, T>{
     }
 
     public static <X> OptionT<TryT<FutureM<?>, ?>, X> help(X val) {
-        return  OptionT.of(TryT.of(FutureM.of(CompletableFuture.completedFuture(val))));
+        return  OptionT.of(TryT.of(FutureM.sunit(val)));
     }
 
     public static void main(String args[]) {
@@ -128,7 +131,7 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, T>{
         exVal.map(println);
         
         System.out.print("*\nisException: ");
-        exVal.lift().lift(Try::isException).map(println);
+        exVal.liftM().lift(Try::isException).map(println);
         
         System.out.print("Inner Optional value: ");
         exVal.lift().map(println);
@@ -146,6 +149,6 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, T>{
         
         TryT<FutureM<?>, Boolean> a = (TryT<FutureM<?>, Boolean>)temp3.run().map(OptionM::isPresent);
         Function<Try<Integer>, Integer> f = x->1;
-        Monad<FutureM<?>, Integer> t = temp3.lift().lift(f);
+        Monad<FutureM<?>, Integer> t = temp3.lift().getM().lift(f);
     }
 }

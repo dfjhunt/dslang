@@ -14,7 +14,7 @@ import dslang.monad.wrapper.OptionM;
 import dslang.monad.wrapper.StreamM;
 import dslang.util.function.Fluent;
 
-public class OptionT<M, T> implements MonadT<OptionT<M, ?>, T> {
+public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
 
     Monad<M, OptionM<T>> myMonad = null;
 
@@ -31,16 +31,26 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, T> {
         return this;
     }
 
-    public M lift() {
+    private Monad<M, Monad<OptionM<?>, T>> convert(Monad<M, OptionM<T>> monad){
+        return monad.map(x->(Monad<OptionM<?>, T>)x);
+    }
+    
+    @Override
+    public Monad<M, Monad<OptionM<?>, T>> lift() {
+        // TODO Auto-generated method stub
+        return convert(myMonad);
+    }
+    
+    public M liftM(){
         return myMonad.getM();
     }
-
+    
     // The point of this is to call map on the nested monad, directly rather than mapping it into the nested OptionM.
     // So the function should take an OptionM and return some value.
     @SuppressWarnings("unchecked")
-    public <U, X> Monad<M, U> lift(Function<? super OptionM<X>, ? extends U> mapper) {
+    public <U, X, N extends Monad<M,U>> N lift(Function<? super OptionM<X>, ? extends U> mapper) {
         Function<OptionM<T>, OptionM<X>> uncheckedFix = t -> (OptionM<X>) t;
-        return myMonad.map(mapper.compose(uncheckedFix));
+        return (N)myMonad.map(mapper.compose(uncheckedFix));
     }
 
     public static <N, S> OptionT<N, S> of(Monad<N, S> m) {
@@ -99,8 +109,7 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, T> {
 
         OptionT<StreamM<?>, Integer> os2 = os.map(x -> x + 4);
 
-        os2.map(println).lift().unwrap().forEach(x -> {
-        });
+        os2.map(println).lift().getM().unwrap().forEach(x -> {});
 
         os2 = OptionT.of(StreamM.of(Stream.of(1, 4)));
 
@@ -109,7 +118,7 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, T> {
             return new OptionT<StreamM<?>, Integer>(temp);
         });
 
-        os3.map(println).lift().unwrap().forEach(x -> {
+        os3.map(println).lift().getM().unwrap().forEach(x -> {
         });
 
         System.out.println("\nlast test");
@@ -122,4 +131,6 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, T> {
             System.out.println(o);
         }
     }
+
+    
 }
