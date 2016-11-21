@@ -129,8 +129,8 @@ public class Try<T> implements Monad<Try<?>, T>{
 
     @Override
     public String toString() {
-        return value != null ? String.format("Optional[%s]", value)
-                : "Optional.empty";
+        return e == null ? String.format("Try[%s]", value)
+                : "Try.exception";
     }
     
     public static void main(String args[]){

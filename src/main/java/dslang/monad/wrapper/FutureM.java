@@ -37,7 +37,6 @@ public class FutureM<T> implements Monad<FutureM<?>, T> {
 
     @Override
     public <U> FutureM<U> flatMap(Function<? super T, ? extends Monad<FutureM<?>, U>> mapper) {
-        @SuppressWarnings("unchecked")
         Function<? super T, CompletableFuture<U>> newMapper = mapper.andThen(o -> ((FutureM<U>) o).unwrap());
         return new FutureM<U>(myFuture.thenCompose(newMapper));
     }

@@ -1,7 +1,6 @@
 package dslang.monad.transformer;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 
 import org.junit.Assert;

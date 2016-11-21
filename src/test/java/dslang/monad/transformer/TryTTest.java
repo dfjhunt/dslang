@@ -64,7 +64,6 @@ public class TryTTest {
         Probe<Integer> p = new Probe<>();
         temp = temp.map(p::set);
         Assert.assertEquals((int) 5, (int) p.get());
-
     }
 
 }

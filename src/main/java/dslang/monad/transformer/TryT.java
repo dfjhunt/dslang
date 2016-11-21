@@ -95,8 +95,6 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
         Function<Object, Object> println = Fluent.of(System.out::println);
         
         temp.map(println);
-
-        OptionT<TryT<FutureM<?>, ?>, String> tempx = temp.map(x->""+x);
         
         final OptionT<TryT<FutureM<?>, ?>, Integer> temp1 = help(5);
         final OptionT<TryT<FutureM<?>, ?>, Integer> temp2 = help(7);
@@ -144,8 +142,6 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
                 return null;
             }
         });
-        //System.out.println("\n"+fm.unwrap().get());
-        
         
         TryT<FutureM<?>, Boolean> a = (TryT<FutureM<?>, Boolean>)temp3.run().map(OptionM::isPresent);
         Function<Try<Integer>, Integer> f = x->1;
