@@ -27,10 +27,6 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
         return (N) myMonad;
     }
 
-    public OptionT<M, T> getM() {
-        return this;
-    }
-
     private Monad<M, Monad<OptionM<?>, T>> convert(Monad<M, OptionM<T>> monad){
         return monad.map(x->(Monad<OptionM<?>, T>)x);
     }

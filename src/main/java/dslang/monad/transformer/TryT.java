@@ -14,10 +14,12 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
 
     Monad<M, Try<T>> myMonad = null;
 
+    //
     public TryT(Monad<M, Try<T>> monad) {
         myMonad = monad;
     }
 
+    //Just a static constructor
     public static <N, S> TryT<N, S> of(Monad<N, S> m){
         return new TryT<N,S>(m.map(t->Try.of(t)));
     }
@@ -30,11 +32,6 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
     public Monad<M, Try<T>> run() {
         return myMonad;
     }
-    
-    public TryT<M, T> getM(){
-        return this;
-    }
-
     
     public Monad<M, Monad<Try<?>, T>> lift(){
         return myMonad.map(x->(Monad<Try<?>, T>)x);
@@ -115,9 +112,6 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
         System.out.print("*\nisPresent: ");
         nullVal.lift(OptionM::isPresent).map(println);
         
-        
-        Monad<TryT<FutureM<?>,?>,Boolean> present = nullVal.lift(OptionM::isPresent);
-        
         temp3.map(x->null).lift(OptionM::isPresent).map(println);
         temp3.lift(OptionM::isPresent).map(println);
         
@@ -135,16 +129,5 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
         exVal.lift().map(println);
         
         
-        FutureM<Integer> fm = (FutureM<Integer>)temp3.lift(OptionM::get).getM().lift((Try<Integer> x)->{
-            try{
-                return x.get();
-            }catch(Exception e){
-                return null;
-            }
-        });
-        
-        TryT<FutureM<?>, Boolean> a = (TryT<FutureM<?>, Boolean>)temp3.run().map(OptionM::isPresent);
-        Function<Try<Integer>, Integer> f = x->1;
-        Monad<FutureM<?>, Integer> t = temp3.lift().getM().lift(f);
     }
 }

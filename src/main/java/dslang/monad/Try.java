@@ -27,20 +27,12 @@ public class Try<T> implements Monad<Try<?>, T>{
         return new Try<>(e);
     }
 
-    public Exception getException(){
-        return e;
-    }
-    
     public static <T> Try<T> of(T value) {
         return new Try<T>(value);
     }
     
-    public static <T> Try<T> of(Supplier<T> thunk) {
-        try{
-          return of(thunk.get());
-        }catch(Exception e){
-          return exception(e);
-        }
+    public Exception getException(){
+        return e;
     }
 
     public static <T,E extends Exception> Try<T> ofChecked(CheckedSupplier<T,E> thunk) {
@@ -54,11 +46,6 @@ public class Try<T> implements Monad<Try<?>, T>{
     @Override
     public <U> Monad<Try<?>, U> unit(U u) {
         return of(u);
-    }
-
-    @Override
-    public Try<?> getM() {
-        return this;
     }
     
     public static <A,B,E extends Exception> Function<A, Try<B>> check(CheckedFunction<A,B,E> f){
@@ -140,7 +127,7 @@ public class Try<T> implements Monad<Try<?>, T>{
         
         Try<Integer> t = fChecked.apply(3);
         
-        
+        System.out.println(t);
     }
 
 }

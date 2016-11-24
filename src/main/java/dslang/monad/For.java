@@ -22,9 +22,10 @@ public class For {
     static public void main(String args[]){
         ListM<String> ranks = ListM.of(Arrays.asList("Ace", "King", "Queen","Jack","10", "9","8","7","6","5","4","3","2"));
         ListM<String> suits = ListM.of(Arrays.asList("Hearts", "Diamonds", "Clubs", "Spades"));
-        
+
+        //creates the cross product of (rank X suit) as pairs
         ListM<Pair<String, String>> deck = For.of(ranks, suits, Pair::of);
 
-        deck.map(Fluent.of(System.out::println));//prints out cross product of (rank X suit) as pairs
+        deck.map(Fluent.of(System.out::println));
     }
 }

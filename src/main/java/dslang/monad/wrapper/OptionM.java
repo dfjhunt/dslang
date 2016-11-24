@@ -4,22 +4,11 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import dslang.monad.Monad;
+import dslang.monad.MonadWrapper;
 
-public class OptionM<T> implements Monad<OptionM<?>, T> {
+public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>> {
 
     Optional<T> myOption = null;
-
-    public Optional<T> unwrap() {
-        return myOption;
-    }
-
-    public String toString(){
-        return myOption.toString();
-    }
-    
-    static public <U> Optional<U> unwrap(Monad<OptionM<?>,U> t) {
-        return ((OptionM<U>)t).unwrap();
-    }
     
     public OptionM(Optional<T> option) {
         myOption = option;
@@ -35,11 +24,22 @@ public class OptionM<T> implements Monad<OptionM<?>, T> {
     
     @Override
     public <U> Monad<OptionM<?>, U> unit(U u) {
-        return new OptionM<U>(Optional.of(u));
+        return sunit(u);
     }
 
     public static <U> OptionM<U> sunit(U u){
         return new OptionM<U>(Optional.of(u));
+    }
+    
+    /*
+     * All of the monad wrappers have an unwrap method to get the original Java "monad"
+     */
+    public Optional<T> unwrap() {
+        return myOption;
+    }
+    
+    static public <U> Optional<U> unwrap(Monad<OptionM<?>,U> t) {
+        return ((OptionM<U>)t).unwrap();
     }
     
     @Override
@@ -59,6 +59,10 @@ public class OptionM<T> implements Monad<OptionM<?>, T> {
     
     public T get(){
         return myOption.get();
+    }
+    
+    public String toString(){
+        return myOption.toString();
     }
     
 }

@@ -4,14 +4,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import dslang.monad.Monad;
+import dslang.monad.MonadWrapper;
 
-public class StreamM<T> implements Monad<StreamM<?>, T>  {
+public class StreamM<T> implements MonadWrapper<StreamM<?>, T, Stream<T>>  {
 
         Stream<T> myStream = null;
-        
-        public Stream<T> unwrap(){
-            return myStream;
-        }
         
         public StreamM(Stream<T> stream) {
             myStream = stream;
@@ -23,9 +20,22 @@ public class StreamM<T> implements Monad<StreamM<?>, T>  {
         
         @Override
         public <U> Monad<StreamM<?>, U> unit(U u) {
+            return sunit(u);
+        }
+        
+        public static <U> Monad<StreamM<?>, U> sunit(U u) {
             return new StreamM<U>(Stream.of(u));
         }
+        
+        @Override
+        public Stream<T> unwrap(){
+            return myStream;
+        }
 
+        public static <U> Stream<U> unwrap(Monad<StreamM<?>,U> m){
+            return ((StreamM<U>)m).unwrap();
+        }
+        
         @Override
         public <U> StreamM<U> map(Function<? super T, ? extends U> mapper) {
             return new StreamM<U>(myStream.map(mapper));
@@ -35,11 +45,6 @@ public class StreamM<T> implements Monad<StreamM<?>, T>  {
         public <U> Monad<StreamM<?>, U> flatMap(Function<? super T, ? extends Monad<StreamM<?>, U>> mapper) {
             Function<? super T, Stream<U>> newMapper = mapper.andThen(o->((StreamM<U>)o).unwrap());
             return new StreamM<U>(myStream.flatMap(newMapper));
-        }
-
-        @Override
-        public StreamM<?> getM() {
-            return this;
         }
         
 

@@ -19,8 +19,4 @@ public interface Monad<M, T> {
     default public M getM() {
         return (M) this;
     }
-
-    public static <M,T,U> Function<Monad<M,T>, U> mFunc(Function<M, U> func){
-        return x->func.apply(x.getM());
-    }
 }
