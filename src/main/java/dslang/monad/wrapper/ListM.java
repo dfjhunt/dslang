@@ -32,7 +32,7 @@ public class ListM<T> implements MonadWrapper<ListM<?>, T, List<T>> {
     
     @Override
     public List<T> unwrap() {
-        return unwrap(this);
+        return myList;
     }
     
     public static <S> List<S> unwrap(Monad<ListM<?>,S> m) {

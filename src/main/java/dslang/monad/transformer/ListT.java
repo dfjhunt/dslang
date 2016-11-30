@@ -2,7 +2,6 @@ package dslang.monad.transformer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 
 import dslang.monad.Monad;
@@ -45,11 +44,7 @@ public class ListT<M, T> implements MonadT<ListT<M, ?>, M, T, ListM<?>> {
     @Override
     public <U> ListT<M, U> map(Function<? super T, ? extends U> mapper) {
         Monad<M, ListM<U>> m = myMonad.map(l -> {
-            List<U> nl = new ArrayList<U>();
-            for(T t: l.unwrap()){
-                nl.add(mapper.apply(t));
-            }
-            return ListM.of(nl);
+            return l.map(mapper);
         });
         return new ListT<M, U>(m);
     }
