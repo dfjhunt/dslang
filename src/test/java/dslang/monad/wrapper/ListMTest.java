@@ -11,7 +11,7 @@ public class ListMTest {
     @Test
     public void unwrapTest(){
         List<Integer> li = Arrays.asList(1, 2, 3);
-        ListM<Integer> lm = ListM.of(Arrays.asList(1, 2, 3));
+        ListM<Integer> lm = ListM.of(li);
         Assert.assertEquals(li, lm.unwrap());
     }
 }

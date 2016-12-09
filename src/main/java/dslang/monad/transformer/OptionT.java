@@ -122,8 +122,7 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
         OptionT<ListM<?>, Integer> optList = OptionT.of(ListM.of(Arrays.asList(1, 2, 3)));
         Function<Integer, List<Integer>> i2Li = x -> Arrays.asList(x, x * 2);
         ListM<OptionM<Integer>> optList2 = optList.flatMap(i2Li.andThen(ListM::of).andThen(OptionT::of)).run();
-        List<OptionM<Integer>> l = optList2.unwrap();
-        for (OptionM<Integer> o : l) {
+        for (OptionM<Integer> o : optList2) {
             System.out.println(o);
         }
     }
