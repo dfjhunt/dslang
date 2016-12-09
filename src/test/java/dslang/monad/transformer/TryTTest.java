@@ -4,6 +4,7 @@ package dslang.monad.transformer;
 import org.junit.Assert;
 import org.junit.Test;
 
+import dslang.monad.Try;
 import dslang.monad.wrapper.FutureM;
 import dslang.monad.wrapper.OptionM;
 
@@ -51,8 +52,8 @@ public class TryTTest {
         temp = temp.map(p::set);
         Assert.assertEquals((int) -1, (int) p.get());
         
-        TryT<FutureM<?>, Boolean> tempTry = temp.lift(OptionM::isPresent);
         Probe<Boolean> p2 = new Probe<>();
+        TryT<FutureM<?>, Boolean> tempTry = temp.lift(OptionM::isPresent);
         tempTry.map(p2::set);
         Assert.assertFalse(p2.get());
     }
@@ -66,4 +67,20 @@ public class TryTTest {
         Assert.assertEquals((int) 5, (int) p.get());
     }
 
+    @Test
+    public void test2LayerTransformerExceptionMap(){
+        OptionT<TryT<FutureM<?>, ?>, Integer> temp = helper(3);
+        temp = temp.map(x->{throw new RuntimeException();});
+        temp.map(x->x+3);
+        
+        Probe<Integer> p = new Probe<>(-1);
+        temp = temp.map(p::set);
+        Assert.assertEquals((int) -1, (int) p.get());
+        
+        Probe<Boolean> p2 = new Probe<>();
+        temp.liftM().lift(Try::isException).map(p2::set);
+        Assert.assertTrue(p2.get());
+        
+    }
+    
 }
