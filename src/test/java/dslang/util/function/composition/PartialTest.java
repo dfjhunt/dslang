@@ -1,5 +1,5 @@
 
-package dslang.util.function;
+package dslang.util.function.composition;
 
 import static dslang.util.function.composition.Hole.__;
 import static org.junit.Assert.assertEquals;
