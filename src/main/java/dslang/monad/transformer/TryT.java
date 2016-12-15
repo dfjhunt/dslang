@@ -5,9 +5,6 @@ import java.util.function.Function;
 import dslang.monad.Monad;
 import dslang.monad.MonadT;
 import dslang.monad.Try;
-import dslang.monad.wrapper.FutureM;
-import dslang.monad.wrapper.OptionM;
-import dslang.util.function.Fluent;
 
 
 public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{

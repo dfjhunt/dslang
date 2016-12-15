@@ -12,7 +12,6 @@ import java.util.stream.StreamSupport;
 import dslang.monad.For;
 import dslang.monad.Monad;
 import dslang.monad.wrapper.ListM;
-import dslang.monad.wrapper.OptionM;
 import dslang.util.function.Fluent;
 
 public class Utility {
@@ -32,10 +31,10 @@ public class Utility {
         }
 
         // return the list, this is an unchecked cast but should only fail if there are two monads that extend Monad<X,?> where
-        // X is the same.  That should never happen since X is supposed to be the Monad's class
+        // X is the same. That should never happen since X is supposed to be the Monad's class
         return (N) mList;
     }
-    
+
     @SuppressWarnings("unchecked")
     public static <M extends Monad<X, Y>, N extends Monad<X, ListM<Y>>, X, Y> N traverse(Function<ListM<Y>, N> unit, ListM<M> list) {
         // create the empty list
@@ -48,14 +47,13 @@ public class Utility {
         }
 
         // return the list, this is an unchecked cast but should only fail if there are two monads that extend Monad<X,?> where
-        // X is the same.  That should never happen since X is supposed to be the Monad's class
+        // X is the same. That should never happen since X is supposed to be the Monad's class
         return (N) mList;
     }
 
-    
-    public static <X> ListM<X> flatten(ListM<ListM<X>> llx){
+    public static <X> ListM<X> flatten(ListM<ListM<X>> llx) {
         ListM<X> l = new ListM<X>();
-        for(ListM<X> lm: llx){
+        for (ListM<X> lm : llx) {
             l.unwrap().addAll(lm.unwrap());
         }
         return l;
