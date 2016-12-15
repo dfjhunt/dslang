@@ -7,31 +7,12 @@ import org.junit.Test;
 import dslang.monad.Try;
 import dslang.monad.wrapper.FutureM;
 import dslang.monad.wrapper.OptionM;
+import dslang.util.Probe;
 
 public class TryTTest {
 
     public static <X> OptionT<TryT<FutureM<?>, ?>, X> helper(X val) {
         return OptionT.of(TryT.of(FutureM.sunit(val)));
-    }
-
-    class Probe<X> {
-        X value;
-
-        public Probe() {
-        }
-
-        public Probe(X defVal) {
-            value = defVal;
-        }
-
-        public X set(X x) {
-            value = x;
-            return x;
-        }
-
-        public X get() {
-            return value;
-        }
     }
 
     @Test

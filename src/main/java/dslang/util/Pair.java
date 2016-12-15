@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -116,6 +117,17 @@ public class Pair<A, B> {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean equals(Object o){
+        return (o!=null)&&(o instanceof Pair) && (((Pair<A,B>)o)._1.equals(_1)) && (((Pair<A,B>)o)._2.equals(_2));
+    }
+    
+    @Override
+    public int hashCode(){
+        return Objects.hash(_1, _2);
+    }
+    
     public static void main(String args[]) {
         // infinite stream
         Stream<Integer> s1 = Stream.iterate(1, i -> i + 1);
