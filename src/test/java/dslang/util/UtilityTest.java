@@ -37,6 +37,21 @@ public class UtilityTest {
     }
     
     @Test
+    public void testListMTraverseShortCircuit() {
+        System.out.println("testSC");
+        ListM<OptionM<Integer>> lo = new ListM<OptionM<Integer>>();
+        lo.add(OptionM.empty());
+        lo.add(OptionM.sunit(2));
+        lo.add(OptionM.sunit(3));
+
+        OptionM<ListM<Integer>> omli = Utility.traverse(OptionM::sunit, lo);
+        
+        System.out.println(omli);
+        
+        Assert.assertFalse(omli.isPresent());
+    }
+    
+    @Test
     public void testFlatten() {
         ListM<ListM<Integer>> lo = new ListM<ListM<Integer>>();
         lo.add(new ListM<Integer>(Arrays.asList(1, 2, 3)));

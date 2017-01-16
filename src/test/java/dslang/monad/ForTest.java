@@ -24,6 +24,14 @@ public class ForTest {
     }
     
     @Test
+    public void testForBiFunction3() {
+        OptionM<Integer> emp = OptionM.empty();
+        OptionM<Integer> opt = For.of(OptionM.sunit(5), emp, (x,y)->x+y);
+        
+        Assert.assertFalse(opt.isPresent());
+    }
+    
+    @Test
     public void testForTriFunction() {
         OptionM<Integer> opt = For.of(OptionM.sunit(3), OptionM.sunit(5), OptionM.sunit(2), (x,y,z)->x+y+z);
         

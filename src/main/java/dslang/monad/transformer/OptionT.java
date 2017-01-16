@@ -33,7 +33,6 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
     
     @Override
     public Monad<M, Monad<OptionM<?>, T>> lift() {
-        // TODO Auto-generated method stub
         return convert(myMonad);
     }
     
