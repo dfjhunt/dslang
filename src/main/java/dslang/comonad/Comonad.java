@@ -1,20 +1,17 @@
 
-package dslang.monad;
+package dslang.comonad;
 
 import java.util.function.Function;
-
-import dslang.Functor;
 
 //M acts as my "this" type, it should be the type of the particular monad implementing
 //this interface, for the sake of allowing map and flatMap to return the same type of 
 //monad with a different inner type
-public interface Monad<M, T> extends Functor<M,T>{
-    public <U> Monad<M, U> unit(U u);
-
-    @Override
-    public <U> Monad<M, U> map(Function<? super T, ? extends U> mapper);
-
-    public <U> Monad<M, U> flatMap(Function<? super T, ? extends Monad<M, U>> mapper);
+public interface Comonad<M, T> {
+    public T extract();
+    
+    public <U>  Comonad<M,U> extend(Function<Comonad<M, T>, U> f);
+    
+    public Comonad<M, Comonad<M,T>> duplicate();
 
     //This is an unsafe cast but should only fail if there are more than one implementation of a Monad with the
     //same M which should never happen since M should be the monad implementation class.

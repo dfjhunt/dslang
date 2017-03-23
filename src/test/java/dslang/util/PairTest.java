@@ -23,11 +23,15 @@ public class PairTest {
         Pair<Integer, Integer> b = Pair.of(1, 2);
         Pair<String, String> c = Pair.of("test", "test");
         Pair<Integer, Integer> d = Pair.of(1, 3);
+        Pair<Integer, Integer> e = Pair.of(1, null);
+        Pair<Integer, Integer> f = Pair.of(1, null);
         
         Assert.assertEquals(a,  b);
         Assert.assertNotEquals(a, c);
         Assert.assertNotEquals(d, a);
         Assert.assertNotEquals(null, a);
+        Assert.assertNotEquals(a, e);
+        Assert.assertEquals(e, f);
     }
     
     @Test
@@ -46,6 +50,25 @@ public class PairTest {
         Assert.assertEquals(expected, zipped.collect(Collectors.toList()));
         
         //now that the zipped stream has been iterated the original streams will have also been
+        Assert.assertTrue(p1.get());
+    }
+    
+    @Test
+    public void testUnzip(){
+        //putting the probe in the stream will allow me to determine when it is iterated so I can prove zip is lazy
+        Probe<Boolean> p1 = new Probe<Boolean>(false);
+        Stream<Integer> s1 = Stream.iterate(1, i -> {p1.set(true); return i + 1;});
+        Stream<String> s2 = Stream.of("a", "b", "c");
+        
+        Stream<Pair<Integer, String>> zipped = Pair.zip(s1,  s2);
+        Pair<Stream<Integer>, Stream<String>> unzipped = Pair.unzip(zipped);
+        
+        //if zip and unzip is lazy the integer stream should not have been iterated
+        Assert.assertFalse(p1.get());
+        
+        Assert.assertEquals(Arrays.asList("a", "b", "c"), unzipped._2.collect(Collectors.toList()));
+        
+        //now that the unzipped stream has been iterated the original streams will have also been
         Assert.assertTrue(p1.get());
     }
 }

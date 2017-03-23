@@ -52,7 +52,7 @@ public class ListT<M, T> implements MonadT<ListT<M, ?>, M, T, ListM<?>> {
     // Used in flatMap to go from List<Monad<List<U>>> to Monad<List<U>> by first traversing
     // to Monad<List<List<U>>> and then flattening the inner lists
     private <U> Monad<M, ListM<U>> traverseFlatten(ListM<Monad<M, ListM<U>>> l) {
-        Monad<M, ListM<ListM<U>>> ll = Utility.traverse(myMonad::unit, l);
+        Monad<M, ListM<ListM<U>>> ll = Utility.sequence(myMonad::unit, l);
         return ll.map(Utility::flatten);
     }
 

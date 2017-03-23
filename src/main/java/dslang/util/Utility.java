@@ -18,7 +18,7 @@ public class Utility {
     }
 
     @SuppressWarnings("unchecked")
-    public static <M extends Monad<X, Y>, N extends Monad<X, List<Y>>, X, Y> N traverse(Function<List<Y>, N> unit, List<M> list) {
+    public static <M extends Monad<X, Y>, N extends Monad<X, List<Y>>, X, Y> N sequence(Function<List<Y>, N> unit, List<M> list) {
         // create the empty list
         Monad<X, List<Y>> mList = unit.apply(new ArrayList<Y>());
 
@@ -33,7 +33,7 @@ public class Utility {
     }
 
     @SuppressWarnings("unchecked")
-    public static <M extends Monad<X, Y>, N extends Monad<X, ListM<Y>>, X, Y> N traverse(Function<ListM<Y>, N> unit, ListM<M> list) {
+    public static <M extends Monad<X, Y>, N extends Monad<X, ListM<Y>>, X, Y> N sequence(Function<ListM<Y>, N> unit, ListM<M> list) {
         // create the empty list
         Monad<X, ListM<Y>> mList = unit.apply(new ListM<Y>());
 

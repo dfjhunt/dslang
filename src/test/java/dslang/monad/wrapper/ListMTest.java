@@ -14,4 +14,12 @@ public class ListMTest {
         ListM<Integer> lm = ListM.of(li);
         Assert.assertEquals(li, lm.unwrap());
     }
+    
+    @Test
+    public void mapTest(){
+        List<Integer> li = Arrays.asList(1, 2, 3);
+        ListM<Integer> lm = ListM.of(li);
+        lm = lm.map(x->x+1);
+        Assert.assertEquals(Arrays.asList(2, 3, 4), lm.unwrap());
+    }
 }

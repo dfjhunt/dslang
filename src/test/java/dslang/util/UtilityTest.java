@@ -19,7 +19,7 @@ public class UtilityTest {
         lo.add(OptionM.sunit(2));
         lo.add(OptionM.sunit(3));
 
-        OptionM<List<Integer>> omli = Utility.traverse(OptionM::sunit, lo);
+        OptionM<List<Integer>> omli = Utility.sequence(OptionM::sunit, lo);
         
         Assert.assertEquals(omli.get(), Arrays.asList(1, 2, 3));
     }
@@ -31,7 +31,7 @@ public class UtilityTest {
         lo.add(OptionM.sunit(2));
         lo.add(OptionM.sunit(3));
 
-        OptionM<ListM<Integer>> omli = Utility.traverse(OptionM::sunit, lo);
+        OptionM<ListM<Integer>> omli = Utility.sequence(OptionM::sunit, lo);
         
         Assert.assertEquals(omli.get().unwrap(), Arrays.asList(1, 2, 3));
     }
@@ -44,7 +44,7 @@ public class UtilityTest {
         lo.add(OptionM.sunit(2));
         lo.add(OptionM.sunit(3));
 
-        OptionM<ListM<Integer>> omli = Utility.traverse(OptionM::sunit, lo);
+        OptionM<ListM<Integer>> omli = Utility.sequence(OptionM::sunit, lo);
         
         System.out.println(omli);
         

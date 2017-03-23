@@ -44,12 +44,8 @@ public class Try<T> implements Monad<Try<?>, T>{
     }
 
     @Override
-    public <U> Monad<Try<?>, U> unit(U u) {
+    public <U> Try<U> unit(U u) {
         return of(u);
-    }
-    
-    public static <A,B,E extends Exception> Function<A, Try<B>> check(CheckedFunction<A,B,E> f){
-        return x->Try.ofChecked((CheckedSupplier<B, E>)()->f.apply(x));
     }
     
     public T get() throws Exception{
@@ -118,6 +114,10 @@ public class Try<T> implements Monad<Try<?>, T>{
     public String toString() {
         return e == null ? String.format("Try[%s]", value)
                 : "Try.exception";
+    }
+    
+    public static <A,B,E extends Exception> Function<A, Try<B>> check(CheckedFunction<A,B,E> f){
+        return x->Try.ofChecked((CheckedSupplier<B, E>)()->f.apply(x));
     }
     
     public static void main(String args[]){

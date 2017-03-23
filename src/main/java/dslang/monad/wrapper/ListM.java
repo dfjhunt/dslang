@@ -33,7 +33,8 @@ public class ListM<T> implements MonadWrapper<ListM<?>, T, List<T>>, Iterable<T>
         return sunit(u);
     }
 
-    public static <U> ListM<U> sunit(U u) {
+    public static <U> ListM<U> sunit(U... u) {
+    	//TODO: the list retruned by this doesn't support add
         return new ListM<U>(Arrays.asList(u));
     }
 

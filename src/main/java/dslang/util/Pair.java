@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -28,6 +29,18 @@ public class Pair<A, B> {
         return "Pair(" + _1 + ", " + _2 + ")";
     }
 
+    public <X> X mapPair(BiFunction<A, B, X> f){
+    	return f.apply(_1, _2);
+    }
+    
+    public <X> Pair<X, B> mapA(Function<A,X> mapper){
+    	return of(mapper.apply(_1), _2);
+    }
+    
+    public <X> Pair<A, X> mapB(Function<B,X> mapper){
+    	return of(_1,mapper.apply(_2));
+    }
+    
     public static final <A, B> Stream<Pair<A, B>> zip(Stream<A> aStream, Stream<B> bStream) {
         PairIterator<A, B> pi = new PairIterator<A, B>(aStream.iterator(), bStream.iterator());
         return Utility.iterator2Stream(pi);
@@ -120,33 +133,11 @@ public class Pair<A, B> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o){
-        return (o!=null)&&(o instanceof Pair) && (((Pair<A,B>)o)._1.equals(_1)) && (((Pair<A,B>)o)._2.equals(_2));
+        return (o!=null)&&(o instanceof Pair) && (Objects.deepEquals(((Pair<A,B>)o)._1, _1)) && (Objects.deepEquals(((Pair<A,B>)o)._2, _2));
     }
     
     @Override
     public int hashCode(){
         return Objects.hash(_1, _2);
-    }
-    
-    public static void main(String args[]) {
-        // infinite stream
-        Stream<Integer> s1 = Stream.iterate(1, i -> i + 1);
-        Stream<String> s2 = Stream.of("a", "b", "c");
-
-        Stream<Pair<Integer, String>> s3 = Pair.zip(s1.map(x -> {
-            System.out.println("1st map: " + x);
-            return x;
-        }), s2);
-
-        Stream<Pair<Integer, String>> s4 = s3.map(x -> {
-            System.out.println("2nd map: " + x);
-            return x;
-        });
-
-        Pair<Stream<Integer>, Stream<String>> p = Pair.unzip(s4);
-
-        System.out.println("zipped");
-        p._1.forEach(System.out::println);
-        p._2.forEach(System.out::println);
     }
 }

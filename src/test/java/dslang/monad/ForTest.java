@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import dslang.monad.wrapper.OptionM;
+import dslang.util.Pair;
 
 public class ForTest {
 
@@ -46,5 +47,15 @@ public class ForTest {
         
         Assert.assertFalse(opt.isPresent());
     }
-
+    
+    @Test
+    public void testFor2MonadsWValuePassing() {
+    	State<Integer, Void> t = //
+				For.of(//
+						State.<Integer>get(), //
+						s -> State.set(s+1), //
+						(x, y) -> null);
+    	
+    	Assert.assertEquals(Pair.of(null, 3), t.run(2));
+    }
 }
