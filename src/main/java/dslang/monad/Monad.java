@@ -3,7 +3,7 @@ package dslang.monad;
 
 import java.util.function.Function;
 
-import dslang.Functor;
+import dslang.functor.Functor;
 
 //M acts as my "this" type, it should be the type of the particular monad implementing
 //this interface, for the sake of allowing map and flatMap to return the same type of 

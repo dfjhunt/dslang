@@ -1,14 +1,16 @@
 
 package dslang.comonad;
 
+import static dslang.util.function.composition.Hole.__;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import dslang.util.function.composition.Hole;
 import dslang.util.function.composition.Partial;
 
 public class ListCM<T> implements Comonad<ListCM<?>, T> {
@@ -56,16 +58,18 @@ public class ListCM<T> implements Comonad<ListCM<?>, T> {
     }
 
     @Override
-    public <U> Comonad<ListCM<?>, U> extend(Function<Comonad<ListCM<?>, T>, U> f) {
-        return extendCM(x -> f.apply((ListCM<T>) x));
+    public <U> ListCM<U> map(Function<? super T, ? extends U> mapper) {
+        return new ListCM<U>(list.stream().map(mapper).collect(Collectors.toList()), index);
     }
-
-    public <U> Comonad<ListCM<?>, U> extendCM(Function<ListCM<T>, U> f) {
+    
+    @Override
+    public <U, V extends Comonad<ListCM<?>, T>> Comonad<ListCM<?>, U> extend(Function<? super V, U> f) {
         List<U> uList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            uList.add(f.apply(new ListCM<T>(list, i)));
-        }
-        return new ListCM<U>(uList, index);
+      for (int i = 0; i < list.size(); i++) {
+          //As long as ListCM is the only class that extends Comonad<ListCM<?>,T> this should be safe
+          uList.add(f.apply((V)new ListCM<T>(list, i)));
+      }
+      return new ListCM<U>(uList, index);
     }
 
     @Override
@@ -95,22 +99,14 @@ public class ListCM<T> implements Comonad<ListCM<?>, T> {
 
         BiFunction<ListCM<Integer>, Integer, Integer> sum = (x, y) -> {
             return x.getWindow(y, 0).stream().reduce(0, (a, b) -> a + b);
-
         };
 
         BiFunction<ListCM<Integer>, Integer, Double> avg = (x, i) -> {
             return ((double) sum.apply(x, i)) / i;
-
         };
 
-        // ListCM<Integer> l2 = (ListCM<Integer>) l.extendCM(sum);
-        // System.out.println(l2.getList());
-        //
-        // ListCM<Integer> l3 = (ListCM<Integer>) l2.extendCM(sum);
-        // System.out.println(l3.getList());
-
         for (int i = 0; i < 10; i++) {
-            ListCM<Double> l4 = (ListCM<Double>) l.extendCM(Partial.of(avg, Hole.__, i));
+            ListCM<Double> l4 = (ListCM<Double>) l.extend(Partial.of(avg, __, i));
             System.out.println(l4.getList());
         }
     }

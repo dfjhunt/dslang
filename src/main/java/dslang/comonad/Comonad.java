@@ -3,13 +3,15 @@ package dslang.comonad;
 
 import java.util.function.Function;
 
+import dslang.functor.Functor;
+
 //M acts as my "this" type, it should be the type of the particular monad implementing
 //this interface, for the sake of allowing map and flatMap to return the same type of 
 //monad with a different inner type
-public interface Comonad<M, T> {
+public interface Comonad<M, T> extends Functor<M, T>{
     public T extract();
     
-    public <U>  Comonad<M,U> extend(Function<Comonad<M, T>, U> f);
+    public <U, V extends Comonad<M,T>>  Comonad<M,U> extend(Function<? super V, U> f);
     
     public Comonad<M, Comonad<M,T>> duplicate();
 

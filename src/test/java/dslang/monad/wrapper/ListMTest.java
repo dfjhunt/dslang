@@ -22,4 +22,11 @@ public class ListMTest {
         lm = lm.map(x->x+1);
         Assert.assertEquals(Arrays.asList(2, 3, 4), lm.unwrap());
     }
+    
+    @Test
+    public void traverseTest(){
+        ListM<Integer> lm = ListM.of(1, 2, 3);
+        OptionM<ListM<String>> oli = lm.traverse(OptionM::sunit, i->OptionM.of(""+i));
+        Assert.assertEquals(Arrays.asList("1","2","3"), oli.get().unwrap());
+    }
 }

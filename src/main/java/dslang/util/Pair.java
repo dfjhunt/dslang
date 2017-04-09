@@ -11,7 +11,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class Pair<A, B> {
+import dslang.functor.BiFunctor;
+
+public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
     public final A _1;
 
     public final B _2;
@@ -33,17 +35,9 @@ public class Pair<A, B> {
     	return f.apply(_1, _2);
     }
     
-    public <X> Pair<X, B> mapA(Function<A,X> mapper){
-    	return of(mapper.apply(_1), _2);
-    }
-    
-    public <X> Pair<A, X> mapB(Function<B,X> mapper){
-    	return of(_1,mapper.apply(_2));
-    }
-    
     public static final <A, B> Stream<Pair<A, B>> zip(Stream<A> aStream, Stream<B> bStream) {
         PairIterator<A, B> pi = new PairIterator<A, B>(aStream.iterator(), bStream.iterator());
-        return Utility.iterator2Stream(pi);
+        return StreamUtil.fromIterator(pi);
     }
 
     public static final <A, B> Pair<Stream<A>, Stream<B>> unzip(Stream<Pair<A, B>> stream) {
@@ -86,7 +80,7 @@ public class Pair<A, B> {
             _iterator = str.iterator();
             Iterator<A> left = new SplitPairIterator<A>(() -> leftIndex, () -> leftIndex++, (p) -> p._1);
             Iterator<B> right = new SplitPairIterator<B>(() -> rightIndex, () -> rightIndex++, (p) -> p._2);
-            pair = Pair.of(Utility.iterator2Stream(left), Utility.iterator2Stream(right));
+            pair = Pair.of(StreamUtil.fromIterator(left), StreamUtil.fromIterator(right));
         }
 
         static public <A, B> Pair<Stream<A>, Stream<B>> splitPairs(Stream<Pair<A, B>> str) {
@@ -140,4 +134,9 @@ public class Pair<A, B> {
     public int hashCode(){
         return Objects.hash(_1, _2);
     }
+
+	@Override
+	public <C, D> Pair<C,D> bimap(Function<? super A, ? extends C> f1, Function<? super B, ? extends D> f2) {
+		return Pair.of(f1.apply(_1), f2.apply(_2));
+	}
 }

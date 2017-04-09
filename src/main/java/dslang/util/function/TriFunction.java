@@ -12,8 +12,4 @@ public interface TriFunction<A, B, C, R> {
       Objects.requireNonNull(after);
       return (A a, B b, C c) -> after.apply(apply(a, b, c));
     }
-
-    default Function<C, R> partial(A a, B b) {
-      return (C c) -> apply(a, b, c);
-    }
   }

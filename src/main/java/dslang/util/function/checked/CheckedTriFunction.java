@@ -1,4 +1,4 @@
-package dslang.util.function;
+package dslang.util.function.checked;
 
 import java.util.Objects;
 import java.util.function.Function;
