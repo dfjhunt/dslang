@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -36,10 +37,24 @@ public class StreamUtil {
         return recurse(seed, t->next.apply(t)!=null, next);
     }
     
+    public static <S> Stream<S> recurse(S seed, Function<S, Stream<S>> expand) {
+        Supplier<Stream<S>> temp = () -> expand.apply(seed).filter(x->x!=null).flatMap(x -> recurse(x, expand));
+        return concatLazyStreams(() -> Stream.of(seed), temp);
+    }
+    
     public static <T> Stream<T> fromIterator(final Iterator<T> i) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(i, Spliterator.ORDERED | Spliterator.IMMUTABLE), false);
     }
 
+    @SafeVarargs
+    public static <T> Stream<T> concatLazyStreams(final Supplier<Stream<T>>... s) {
+        return concatLazyStreams(Stream.of(s));
+    }
+    
+    public static <T> Stream<T> concatLazyStreams(final Stream<Supplier<Stream<T>>> s) {
+        return s.flatMap(x -> x.get());
+    }
+    
     public static <S extends T, T> Function<T, Stream<S>> cast(Class<S> cls) {
         return t -> {
             if (!cls.isInstance(t))
