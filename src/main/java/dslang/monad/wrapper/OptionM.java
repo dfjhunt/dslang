@@ -1,5 +1,6 @@
 package dslang.monad.wrapper;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -73,6 +74,8 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
     @Override
     public <C> SplitFunctor<OptionM<?>, Void, C> repair(Function<? super Void, ? extends C> left,
                                                           Function<? super T, ? extends C> right) {
+        Objects.requireNonNull(left);
+        Objects.requireNonNull(right);
         C c = isPresent()?right.apply(myOption.get()):left.apply(null);
         return OptionM.sunit(c);
     }

@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import dslang.functor.BiFunctor;
+import dslang.monad.Monad;
 
 public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
     public final A _1;
@@ -124,6 +125,15 @@ public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
         }
     }
 
+    /**
+     * Turns a pair of monads into a monad of pair
+     * @param pair - pair of two monads of the same monad-type
+     * @return - monad of a pair
+     */
+    public static <M,A,B> Monad<M, Pair<A,B>> sequence(Pair<Monad<M,A>, Monad<M,B>> pair){
+       return pair._1.flatMap(a->pair._2.map(b->Pair.of(a, b)));
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o){
