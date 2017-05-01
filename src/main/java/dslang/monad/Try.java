@@ -1,3 +1,4 @@
+
 package dslang.monad;
 
 import java.util.Objects;
@@ -13,7 +14,7 @@ import dslang.util.function.checked.CheckedFunction;
 import dslang.util.function.checked.CheckedSupplier;
 import dslang.util.function.checked.CheckedTriFunction;
 
-public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Try<?>, Exception, T> {
+public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Exception, T> {
 
     private final Exception e;
 
@@ -82,11 +83,13 @@ public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Try<?>, Exception,
     }
 
     public T orElse(T other) {
-        return !isException() ? value : other;
+        return !isException() ? value
+            : other;
     }
 
     public T orElseGet(Supplier<? extends T> other) {
-        return !isException() ? value : other.get();
+        return !isException() ? value
+            : other.get();
     }
 
     @Override
@@ -110,12 +113,12 @@ public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Try<?>, Exception,
 
     @Override
     public String toString() {
-        return e == null ? String.format("Try[%s]", value) : "Try.exception";
+        return e == null ? String.format("Try[%s]", value)
+            : "Try.exception";
     }
-    
+
     @Override
-    public <C> Try<C> repair(Function<? super Exception, ? extends C> left,
-                             Function<? super T, ? extends C> right) {
+    public <C> Try<C> repair(Function<? super Exception, ? extends C> left, Function<? super T, ? extends C> right) {
         Objects.requireNonNull(left);
         Objects.requireNonNull(right);
         try {
@@ -128,7 +131,7 @@ public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Try<?>, Exception,
             return exception(ex);
         }
     }
-    
+
     /********** Exceptional Function Wrappers **************/
 
     public static <T, E extends Exception> Try<T> ofChecked(CheckedSupplier<T, E> thunk) {
@@ -138,7 +141,7 @@ public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Try<?>, Exception,
             return exception(e);
         }
     }
-    
+
     public static <A, E extends Exception> Function<A, Try<Void>> check(CheckedConsumer<A, E> f) {
         return x -> Try.ofChecked((CheckedSupplier<Void, E>) () -> {
             f.accept(x);

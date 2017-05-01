@@ -1,3 +1,4 @@
+
 package dslang.monad.wrapper;
 
 import java.util.Objects;
@@ -9,7 +10,7 @@ import dslang.functor.SplitFunctor;
 import dslang.monad.Monad;
 import dslang.monad.MonadWrapper;
 
-public class FutureM<T> implements MonadWrapper<FutureM<?>, T, CompletableFuture<T>>, SplitFunctor<FutureM<?>, Throwable, T> {
+public class FutureM<T> implements MonadWrapper<FutureM<?>, T, CompletableFuture<T>>, SplitFunctor<Throwable, T> {
 
     CompletableFuture<T> myFuture = null;
 
@@ -51,8 +52,7 @@ public class FutureM<T> implements MonadWrapper<FutureM<?>, T, CompletableFuture
     }
 
     @Override
-    public <C> FutureM<C> repair(Function<? super Throwable, ? extends C> left,
-                                   Function<? super T, ? extends C> right) {
+    public <C> FutureM<C> repair(Function<? super Throwable, ? extends C> left, Function<? super T, ? extends C> right) {
         Objects.requireNonNull(left);
         Objects.requireNonNull(right);
         return new FutureM<C>(myFuture.handle((value, throwable) -> {

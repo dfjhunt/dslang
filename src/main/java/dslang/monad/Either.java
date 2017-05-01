@@ -1,3 +1,4 @@
+
 package dslang.monad;
 
 import java.util.Objects;
@@ -13,8 +14,9 @@ import dslang.functor.SplitFunctor;
  * @param <A> - left type
  * @param <B> - right type
  */
-public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<Either<?, ?>, A, B>, SplitFunctor<Either<?, ?>, A, B> {
+public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<A, B>, SplitFunctor<A, B> {
     final A _a;
+
     final B _b;
 
     final boolean _isLeft;
@@ -54,7 +56,9 @@ public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<Either<?,
         return _isLeft;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see dslang.monad.Monad#unit(java.lang.Object)
      */
     @Override
@@ -62,7 +66,9 @@ public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<Either<?,
         return right(u);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see dslang.monad.Monad#map(java.util.function.Function)
      */
     @Override
@@ -73,7 +79,9 @@ public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<Either<?,
             return right(mapper.apply(_b));
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see dslang.monad.Monad#flatMap(java.util.function.Function)
      */
     @Override
@@ -84,12 +92,13 @@ public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<Either<?,
             return mapper.apply(_b);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see dslang.functor.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    public <C, D> BiFunctor<Either<?, ?>, C, D> bimap(Function<? super A, ? extends C> f1,
-                                                      Function<? super B, ? extends D> f2) {
+    public <C, D> BiFunctor<C, D> bimap(Function<? super A, ? extends C> f1, Function<? super B, ? extends D> f2) {
         Objects.requireNonNull(f1);
         Objects.requireNonNull(f2);
         if (_isLeft)
@@ -98,14 +107,17 @@ public class Either<A, B> implements Monad<Either<?, ?>, B>, BiFunctor<Either<?,
             return right(f2.apply(_b));
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see dslang.functor.SplitFunctor#repair(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    public <C> SplitFunctor<Either<?, ?>, A, C> repair(Function<? super A, ? extends C> left, Function<? super B, ? extends C> right) {
+    public <C> SplitFunctor<A, C> repair(Function<? super A, ? extends C> left, Function<? super B, ? extends C> right) {
         Objects.requireNonNull(left);
         Objects.requireNonNull(right);
-        C c = _isLeft ? left.apply(_a) : right.apply(_b);
+        C c = _isLeft ? left.apply(_a)
+            : right.apply(_b);
         return right(c);
     }
 }

@@ -66,7 +66,7 @@ public class PairTest {
         //if zip and unzip is lazy the integer stream should not have been iterated
         Assert.assertFalse(p1.get());
         
-        Assert.assertEquals(Arrays.asList("a", "b", "c"), unzipped._2.collect(Collectors.toList()));
+        Assert.assertEquals(Arrays.asList("a", "b", "c"), unzipped.right().collect(Collectors.toList()));
         
         //now that the unzipped stream has been iterated the original streams will have also been
         Assert.assertTrue(p1.get());

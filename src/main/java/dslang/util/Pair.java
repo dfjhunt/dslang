@@ -14,14 +14,22 @@ import java.util.stream.Stream;
 import dslang.functor.BiFunctor;
 import dslang.monad.Monad;
 
-public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
-    public final A _1;
+public class Pair<A, B> implements BiFunctor<A, B> {
+    private final A _left;
 
-    public final B _2;
+    private final B _right;
 
     public Pair(A one, B two) {
-        this._1 = one;
-        this._2 = two;
+        this._left = one;
+        this._right = two;
+    }
+
+    public A left() {
+        return _left;
+    }
+
+    public B right() {
+        return _right;
     }
 
     static public <X, Y> Pair<X, Y> of(X x, Y y) {
@@ -29,13 +37,13 @@ public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
     }
 
     public String toString() {
-        return "Pair(" + _1 + ", " + _2 + ")";
+        return "Pair(" + _left + ", " + _right + ")";
     }
 
-    public <X> X mapPair(BiFunction<A, B, X> f){
-    	return f.apply(_1, _2);
+    public <X> X mapPair(BiFunction<A, B, X> f) {
+        return f.apply(_left, _right);
     }
-    
+
     public static final <A, B> Stream<Pair<A, B>> zip(Stream<A> aStream, Stream<B> bStream) {
         PairIterator<A, B> pi = new PairIterator<A, B>(aStream.iterator(), bStream.iterator());
         return StreamUtil.fromIterator(pi);
@@ -79,8 +87,8 @@ public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
 
         public PairIteratorSplitter(Stream<Pair<A, B>> str) {
             _iterator = str.iterator();
-            Iterator<A> left = new SplitPairIterator<A>(() -> leftIndex, () -> leftIndex++, (p) -> p._1);
-            Iterator<B> right = new SplitPairIterator<B>(() -> rightIndex, () -> rightIndex++, (p) -> p._2);
+            Iterator<A> left = new SplitPairIterator<A>(() -> leftIndex, () -> leftIndex++, (p) -> p._left);
+            Iterator<B> right = new SplitPairIterator<B>(() -> rightIndex, () -> rightIndex++, (p) -> p._right);
             pair = Pair.of(StreamUtil.fromIterator(left), StreamUtil.fromIterator(right));
         }
 
@@ -127,26 +135,28 @@ public class Pair<A, B> implements BiFunctor<Pair<?,?>, A, B>{
 
     /**
      * Turns a pair of monads into a monad of pair
+     * 
      * @param pair - pair of two monads of the same monad-type
      * @return - monad of a pair
      */
-    public static <M,A,B> Monad<M, Pair<A,B>> sequence(Pair<Monad<M,A>, Monad<M,B>> pair){
-       return pair._1.flatMap(a->pair._2.map(b->Pair.of(a, b)));
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean equals(Object o){
-        return (o!=null)&&(o instanceof Pair) && (Objects.deepEquals(((Pair<A,B>)o)._1, _1)) && (Objects.deepEquals(((Pair<A,B>)o)._2, _2));
-    }
-    
-    @Override
-    public int hashCode(){
-        return Objects.hash(_1, _2);
+    public static <M, A, B> Monad<M, Pair<A, B>> sequence(Pair<Monad<M, A>, Monad<M, B>> pair) {
+        return pair._left.flatMap(a -> pair._right.map(b -> Pair.of(a, b)));
     }
 
-	@Override
-	public <C, D> Pair<C,D> bimap(Function<? super A, ? extends C> f1, Function<? super B, ? extends D> f2) {
-		return Pair.of(f1.apply(_1), f2.apply(_2));
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean equals(Object o) {
+        return (o != null) && (o instanceof Pair) && (Objects.deepEquals(((Pair<A, B>) o)._left, _left)) &&
+                        (Objects.deepEquals(((Pair<A, B>) o)._right, _right));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_left, _right);
+    }
+
+    @Override
+    public <C, D> Pair<C, D> bimap(Function<? super A, ? extends C> f1, Function<? super B, ? extends D> f2) {
+        return Pair.of(f1.apply(_left), f2.apply(_right));
+    }
 }
