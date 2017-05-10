@@ -55,7 +55,7 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
     }
 
     @Override
-    public <U> Monad<OptionM<?>, U> flatMap(Function<? super T, ? extends Monad<OptionM<?>, U>> mapper) {
+    public <U> OptionM<U> flatMap(Function<? super T, ? extends Monad<OptionM<?>, U>> mapper) {
         Function<? super T, Optional<U>> newMapper = mapper.andThen(o -> ((OptionM<U>) o).unwrap());
         return new OptionM<U>(myOption.flatMap(newMapper));
     }
@@ -73,7 +73,7 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
     }
 
     @Override
-    public <C> SplitFunctor<Void, C> repair(Function<? super Void, ? extends C> left, Function<? super T, ? extends C> right) {
+    public <C> OptionM<C> repair(Function<? super Void, ? extends C> left, Function<? super T, ? extends C> right) {
         Objects.requireNonNull(left);
         Objects.requireNonNull(right);
         C c = isPresent() ? right.apply(myOption.get())
