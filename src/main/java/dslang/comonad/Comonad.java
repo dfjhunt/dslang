@@ -20,8 +20,6 @@ public interface Comonad<M, T> extends Functor<T> {
      */
     public <U, V extends Comonad<M, T>> Comonad<M, U> extend(Function<? super V, ? extends U> f);
 
-    public Comonad<M, Comonad<M, T>> duplicate();
-
     @Override
     public <U> Comonad<M, U> map(Function<? super T, ? extends U> mapper);
 

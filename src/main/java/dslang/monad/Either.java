@@ -120,4 +120,33 @@ public class Either<A, B> implements Monad<Either<A, ?>, B>, BiFunctor<A, B>, Sp
             : right.apply(_right);
         return right(c);
     }
+
+    @Override
+    public String toString() {
+        return _isLeft ? "Left[" + _left + "]"
+            : "Right[" + _right + "]";
+    }
+
+    public <C> C fold(Function<? super A, ? extends C> left, Function<? super B, ? extends C> right) {
+        Objects.requireNonNull(left);
+        Objects.requireNonNull(right);
+        return _isLeft ? left.apply(_left)
+            : right.apply(_right);
+    }
+
+    public boolean equals(Object o) {
+        try {
+            if ((o != null) && (o instanceof Either)) {
+                Either<A, B> e = (Either<A, B>) o;
+                if (e.isLeft() == isLeft()) {
+                    return Objects.deepEquals(isLeft() ? _left
+                        : _right, e.fold(x -> x, x -> x));
+
+                }
+            }
+        } catch (ClassCastException e) {
+            return false;
+        }
+        return false;
+    }
 }

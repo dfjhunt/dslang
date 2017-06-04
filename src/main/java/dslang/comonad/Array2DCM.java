@@ -78,11 +78,6 @@ public class Array2DCM<T> implements Comonad<Array2DCM<?>, T> {
         return new Array2DCM<>(temp, _index);
     }
 
-    @Override
-    public Array2DCM<Comonad<Array2DCM<?>, T>> duplicate() {
-        return null;
-    }
-
     private Object[][] cloneGrid() {
         Object[][] ts = _grid.clone();
         for (int i = 0; i < ts.length; i++) {

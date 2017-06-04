@@ -80,5 +80,4 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
             : left.apply(null);
         return OptionM.sunit(c);
     }
-
 }

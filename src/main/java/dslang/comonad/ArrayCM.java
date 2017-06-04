@@ -67,15 +67,6 @@ public class ArrayCM<T> implements Comonad<ArrayCM<?>, T> {
         }
         return new ArrayCM<U>(uList, index);
     }
-    
-    @Override
-    public Comonad<ArrayCM<?>, Comonad<ArrayCM<?>, T>> duplicate() {
-        List<Comonad<ArrayCM<?>, T>> l = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            l.add((Comonad<ArrayCM<?>, T>) (new ArrayCM<T>(list, i)));
-        }
-        return new ArrayCM<>(l, index);
-    }
 
     public List<T> getWindow(int windowSize, T pad) {
         List<T> rl = new ArrayList<>();
