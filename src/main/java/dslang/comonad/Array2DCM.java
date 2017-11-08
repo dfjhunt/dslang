@@ -129,22 +129,6 @@ public class Array2DCM<T> implements Comonad<Array2DCM<?>, T> {
         else
             return 0;
     }
-
-    public static int lifeSteptest(Comonad<Array2DCM<?>, Integer> cg) {
-        Array2DCM<Integer> g = (Array2DCM<Integer>) cg;
-        OptionM<Array2DCM<Integer>> up = g.up();
-        OptionM<Array2DCM<Integer>> down = g.down();
-        int sum = open(up.flatMap(gr -> gr.left())) + //
-                        open(up) + //
-                        open(up.flatMap(gr -> gr.right())) + //
-                        open(g.left()) + //
-                        g.extract() + //
-                        open(g.right()) + //
-                        open(down.flatMap(gr -> gr.left())) + //
-                        open(down) + //
-                        open(down.flatMap(gr -> gr.right()));
-        return sum;
-    }
     
     public static void main(String args[]) {
         Integer temp[][] = { { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 } };

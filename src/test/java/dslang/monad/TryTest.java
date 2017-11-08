@@ -81,9 +81,7 @@ public class TryTest {
 
     @Test
     public void testCheckTriFunction() throws Exception{
-        CheckedTriFunction<Integer, Integer, Integer, Integer, Exception> f = (a,b,c) -> {
-            throw new Exception("Test");
-        };
+        CheckedTriFunction<Integer, Integer, Integer, Integer, Exception> f = (a,b,c) -> a+b+c;
 
         TriFunction<Integer, Integer, Integer, Try<Integer>> fChecked = Try.check(f);
 

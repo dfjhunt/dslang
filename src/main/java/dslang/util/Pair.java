@@ -19,9 +19,9 @@ public class Pair<A, B> implements BiFunctor<A, B> {
 
     private final B _right;
 
-    public Pair(A one, B two) {
-        this._left = one;
-        this._right = two;
+    public Pair(A left, B right) {
+        this._left = left;
+        this._right = right;
     }
 
     public A left() {
@@ -45,35 +45,21 @@ public class Pair<A, B> implements BiFunctor<A, B> {
     }
 
     public static final <A, B> Stream<Pair<A, B>> zip(Stream<A> aStream, Stream<B> bStream) {
-        PairIterator<A, B> pi = new PairIterator<A, B>(aStream.iterator(), bStream.iterator());
-        return StreamUtil.fromIterator(pi);
+        return zip(aStream.iterator(), bStream.iterator());
+    }
+
+    public static final <A, B> Stream<Pair<A, B>> zip(Iterable<A> aIterable, Iterable<B> bIterable) {
+        return zip(aIterable.iterator(), bIterable.iterator());
+    }
+
+    public static final <A, B> Stream<Pair<A, B>> zip(Iterator<A> aIterator, Iterator<B> bIterator) {
+        return StreamUtil.unfold(p -> p.left().hasNext() && p.right().hasNext(), //
+            p -> Pair.of(Pair.of(p.left().next(), p.right().next()), Pair.of(p.left(), p.right())),//
+            Pair.of(aIterator, bIterator));
     }
 
     public static final <A, B> Pair<Stream<A>, Stream<B>> unzip(Stream<Pair<A, B>> stream) {
         return PairIteratorSplitter.splitPairs(stream);
-    }
-
-    static class PairIterator<A, B> implements Iterator<Pair<A, B>> {
-        private final Iterator<A> aIterator;
-
-        private final Iterator<B> bIterator;
-
-        public PairIterator(Iterator<A> aIterator, Iterator<B> bIterator) {
-            this.aIterator = aIterator;
-            this.bIterator = bIterator;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return aIterator.hasNext() && bIterator.hasNext();
-        }
-
-        @Override
-        public Pair<A, B> next() {
-            if (!aIterator.hasNext() || !bIterator.hasNext())
-                throw new NoSuchElementException();
-            return Pair.of(aIterator.next(), bIterator.next());
-        }
     }
 
     static class PairIteratorSplitter<A, B> {

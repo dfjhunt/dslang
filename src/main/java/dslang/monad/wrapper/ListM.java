@@ -79,7 +79,7 @@ public class ListM<T> implements MonadWrapper<ListM<?>, T, List<T>>, Iterable<T>
     }
 
     @SuppressWarnings("unchecked")
-    public <M extends Monad<X, U>, N extends Monad<X, ListM<U>>, U, X, Z> N traverse(Function<ListM<U>, N> unit,
+    public <M extends Monad<X, U>, N extends Monad<X, ListM<U>>, U, X extends Monad<?,?>, Z> N traverse(Function<ListM<U>, N> unit,
 			Function<T, M> map) {
         Monad<X, List<U>> ml =  unit.apply(new ListM<>()).map(x->x.unwrap());
         Function<List<U>, ListM<U>> wrap = ListM::of;

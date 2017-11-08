@@ -1,6 +1,8 @@
+
 package dslang.util;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,7 +13,9 @@ public class StreamUtilTest {
 
     class Node {
         Node _left;
+
         Node _right;
+
         String _id;
 
         public Node(String id, Node left, Node right) {
@@ -45,4 +49,10 @@ public class StreamUtilTest {
         Assert.assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5), StreamUtil.recurse(0, i -> i < 5, i -> i + 1).collect(Collectors.toList()));
     }
 
+    @Test
+    public void testUnfold() {
+        Stream<Integer> s =
+            StreamUtil.unfold(x -> true, p -> Pair.of(p.left() + p.right(), Pair.of(p.right(), p.left() + p.right())), Pair.of(0, 1));
+        Assert.assertEquals(Arrays.asList(1, 2, 3, 5, 8, 13, 21, 34, 55, 89), s.limit(10).collect(Collectors.toList()));
+    }
 }

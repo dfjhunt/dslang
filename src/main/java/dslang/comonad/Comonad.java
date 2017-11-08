@@ -8,7 +8,7 @@ import dslang.functor.Functor;
 //M acts as my "this" type, it should be the type of the particular monad implementing
 //this interface, for the sake of allowing map and flatMap to return the same type of 
 //monad with a different inner type
-public interface Comonad<M, T> extends Functor<T> {
+public interface Comonad<M, T> extends Functor<M, T> {
     public T extract();
 
     /**
