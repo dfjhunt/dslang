@@ -2,12 +2,14 @@
 package dslang.util;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import dslang.monad.wrapper.OptionM;
 
 public class StreamUtilTest {
 
@@ -46,7 +48,7 @@ public class StreamUtilTest {
 
     @Test
     public void testRecurse() {
-        Assert.assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5), StreamUtil.recurse(0, i -> i < 5, i -> i + 1).collect(Collectors.toList()));
+        Assert.assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5), StreamUtil.recurse(i -> i < 5, i -> i + 1, 0).collect(Collectors.toList()));
     }
 
     @Test
@@ -54,5 +56,32 @@ public class StreamUtilTest {
         Stream<Integer> s =
             StreamUtil.unfold(x -> true, p -> Pair.of(p.left() + p.right(), Pair.of(p.right(), p.left() + p.right())), Pair.of(0, 1));
         Assert.assertEquals(Arrays.asList(1, 2, 3, 5, 8, 13, 21, 34, 55, 89), s.limit(10).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testUnfold_takeWhile() {
+        Stream<Integer> str = StreamUtil.unfold(i -> {
+            if (i.hasNext()) {
+                Integer temp = i.next();
+                if (temp < 5) {
+                    return OptionM.of(Pair.of(temp, i));
+                }
+            }
+            return OptionM.empty();
+        }, (Iterator<Integer>) Stream.iterate(0, i -> i + 1).iterator());
+
+        Assert.assertEquals(Arrays.asList(0, 1, 2, 3, 4), str.collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testScan() {
+        Stream<Integer> str = StreamUtil.scan((x, y) -> x + y, 0, Stream.iterate(0, i -> i + 1));
+        Assert.assertEquals(Arrays.asList(0, 1, 3, 6, 10, 15), str.limit(6).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testTakeWhile() {
+        Stream<Integer> str = StreamUtil.takeWhile(i -> i < 10, Stream.iterate(0, i -> i + 1));
+        Assert.assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), str.collect(Collectors.toList()));
     }
 }

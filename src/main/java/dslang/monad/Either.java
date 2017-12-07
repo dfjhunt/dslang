@@ -91,7 +91,7 @@ public class Either<A, B> implements Monad<Either<A, ?>, B>, BiFunctor<A, B>, Sp
         else
             return (Either<A, U>) mapper.apply(_right);
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -141,7 +141,6 @@ public class Either<A, B> implements Monad<Either<A, ?>, B>, BiFunctor<A, B>, Sp
                 if (e.isLeft() == isLeft()) {
                     return Objects.deepEquals(isLeft() ? _left
                         : _right, e.fold(x -> x, x -> x));
-
                 }
             }
         } catch (ClassCastException e) {

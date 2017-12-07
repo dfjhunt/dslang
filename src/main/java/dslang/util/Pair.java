@@ -53,8 +53,12 @@ public class Pair<A, B> implements BiFunctor<A, B> {
     }
 
     public static final <A, B> Stream<Pair<A, B>> zip(Iterator<A> aIterator, Iterator<B> bIterator) {
+        return zipWith(Pair::of, aIterator, bIterator);
+    }
+    
+    public static final <A,B,C> Stream<C> zipWith(BiFunction<A,B,C> f, Iterator<A> aIterator, Iterator<B> bIterator){
         return StreamUtil.unfold(p -> p.left().hasNext() && p.right().hasNext(), //
-            p -> Pair.of(Pair.of(p.left().next(), p.right().next()), Pair.of(p.left(), p.right())),//
+            p -> Pair.of(f.apply(p.left().next(), p.right().next()), Pair.of(p.left(), p.right())),//
             Pair.of(aIterator, bIterator));
     }
 
