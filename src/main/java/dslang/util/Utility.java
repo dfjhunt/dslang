@@ -4,7 +4,6 @@ package dslang.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -28,6 +27,7 @@ public class Utility {
         return traverseGen(unit.apply(new ArrayList<Y>()), x -> x, list);
     }
 
+    @SuppressWarnings("unchecked")
     public static <M extends Monad<X, Y>, N extends Monad<X, ListM<Y>>, X, Y> N sequenceListM(Function<ListM<Y>, N> unit, ListM<M> list) {
         Function<List<Y>, Monad<X, List<Y>>> lUnit = l -> unit.apply(ListM.of(l)).map(x -> x.unwrap());
         Function<List<Y>, ListM<Y>> wrap = ListM::of;
@@ -77,25 +77,11 @@ public class Utility {
 
         List<FutureM<Integer>> lfi = Arrays.asList(FutureM.sunit(3), FutureM.of(cf));
 
-        Function<FutureM<Integer>, FutureM<Try<Integer>>> safe = f -> FutureM.of(f.unwrap().handle((i, thr) -> {
-            if (thr != null) {
-                return Try.exception((Exception) thr);
-            } else {
-                return Try.of(i);
-            }
-        }));
+        Function<FutureM<Integer>, FutureM<Try<Integer>>> safe = f -> 
+        f.repair(x -> Try.exception((Exception)x), x->Try.of(x));
 
         FutureM<List<Try<Integer>>> fut = traverse(FutureM::sunit, safe, lfi);
         fut.map(Fluent.of(System.out::println));
 
-    }
-
-    public <S extends T, T> Function<T, Optional<S>> castOpt(Class<S> cls) {
-        return t -> {
-            if (!cls.isInstance(t))
-                return Optional.empty();
-            else
-                return Optional.of(cls.cast(t));
-        };
     }
 }

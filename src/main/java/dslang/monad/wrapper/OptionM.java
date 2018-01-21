@@ -3,8 +3,10 @@ package dslang.monad.wrapper;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import dslang.functor.Applicative;
 import dslang.functor.SplitFunctor;
 import dslang.monad.Monad;
 import dslang.monad.MonadWrapper;
@@ -79,5 +81,10 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
         C c = isPresent() ? right.apply(myOption.get())
             : left.apply(null);
         return OptionM.sunit(c);
+    }
+
+    @Override
+    public <B, C> OptionM<C> map2(Applicative<OptionM<?>, B> apb, BiFunction<T, B, C> f) {
+        return (OptionM<C>)MonadWrapper.super.map2(apb, f);
     }
 }
