@@ -14,7 +14,9 @@ public interface Monad<M, T> extends Applicative<M,T>{
     public <U> Monad<M, U> unit(U u);
 
     @Override
-    public <U> Monad<M, U> map(Function<? super T, ? extends U> mapper);
+    default <U> Monad<M, U> map(Function<? super T, ? extends U> mapper){
+        return flatMap(t->unit(mapper.apply(t)));
+    }
 
     public <U> Monad<M, U> flatMap(Function<? super T, ? extends Monad<M, U>> mapper);
    

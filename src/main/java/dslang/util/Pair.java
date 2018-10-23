@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import dslang.functor.Applicative;
 import dslang.functor.BiFunctor;
 import dslang.monad.Monad;
 
@@ -130,9 +131,13 @@ public class Pair<A, B> implements BiFunctor<A, B> {
      * @return - monad of a pair
      */
     public static <M, A, B> Monad<M, Pair<A, B>> sequence(Pair<Monad<M, A>, Monad<M, B>> pair) {
-        return pair._left.flatMap(a -> pair._right.map(b -> Pair.of(a, b)));
+        return (Monad<M, Pair<A, B>>)pair.bitraverse(x->x, x->x);
     }
 
+    public <M,C,D> Applicative<M, Pair<C,D>> bitraverse(Function<A, Applicative<M, C>> leftF, Function<B, Applicative<M,D>> rightF){
+        return leftF.apply(_left).map2(rightF.apply(_right), Pair::of);
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o) {

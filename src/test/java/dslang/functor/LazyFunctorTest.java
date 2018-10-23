@@ -10,8 +10,8 @@ public class LazyFunctorTest {
 
     @Test
     public void test() {
-        LazyFunctor<OptionM<?>, Integer> lf = LazyFunctor.lift(OptionM.of(4));
-        LazyFunctor<OptionM<?>, String> lfs = lf.map(i -> "#" + i).map(s -> "val = " + s);
+        LazyFunctor<OptionM.t, Integer> lf = LazyFunctor.lift(OptionM.of(4));
+        LazyFunctor<OptionM.t, String> lfs = lf.map(i -> "#" + i).map(s -> "val = " + s);
         OptionM<String> os = (OptionM<String>) lfs.run();
         Assert.assertEquals("val = #4", os.get());
     }

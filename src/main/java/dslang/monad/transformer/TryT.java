@@ -7,7 +7,7 @@ import dslang.monad.MonadT;
 import dslang.monad.Try;
 
 
-public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
+public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try.t>{
 
     Monad<M, Try<T>> myMonad = null;
 
@@ -30,8 +30,8 @@ public class TryT<M, T> implements MonadT<TryT<M, ?>, M, T, Try<?>>{
         return myMonad;
     }
     
-    public Monad<M, Monad<Try<?>, T>> lift(){
-        return myMonad.map(x->(Monad<Try<?>, T>)x);
+    public Monad<M, Monad<Try.t, T>> lift(){
+        return myMonad.map(x->(Monad<Try.t, T>)x);
     }
     
     public M liftM(){

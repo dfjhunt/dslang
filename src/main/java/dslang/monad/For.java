@@ -58,7 +58,31 @@ public class For {
                                                                                                             TriFunction<A, B, C, D> func) {
         return (Z) a.flatMap(av -> bf.apply(av).flatMap(bv -> cf.apply(av, bv).map(cv -> func.apply(av, bv, cv))));
     }
+    
+    @SuppressWarnings("unchecked")
+    static public <M, A, B, X extends Monad<M, B>> X of(
+                                                                                                            Monad<M, A> a,
+                                                                                                            Function<A, X> bf) {
+        return (X) a.flatMap(av -> bf.apply(av));
+    }
+    
+    @SuppressWarnings("unchecked")
+    static public <M, A, B, C, D, X extends Monad<M, B>, Y extends Monad<M, C>> Y of(
+                                                                                                            Monad<M, A> a,
+                                                                                                            Function<A, X> bf,
+                                                                                                            Function<B, Y> cf) {
+        return (Y) a.flatMap(av -> bf.apply(av).flatMap(bv -> cf.apply(bv)));
+    }
 
+    @SuppressWarnings("unchecked")
+    static public <M, A, B, C, D, X extends Monad<M, B>, Y extends Monad<M, C>, Z extends Monad<M, D>> Z of(
+                                                                                                            Monad<M, A> a,
+                                                                                                            Function<A, X> bf,
+                                                                                                            Function<B, Y> cf,
+                                                                                                            Function<C, D> func) {
+        return (Z) a.flatMap(av -> bf.apply(av).flatMap(bv -> cf.apply(bv).map(cv -> func.apply(cv))));
+    }
+    
     static public void main(String args[]) {
         ListM<String> ranks = ListM
                         .of(Arrays.asList("Ace", "King", "Queen", "Jack", "10", "9", "8", "7", "6", "5", "4", "3", "2"));

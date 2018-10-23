@@ -14,7 +14,7 @@ import dslang.monad.wrapper.OptionM;
 import dslang.monad.wrapper.StreamM;
 import dslang.util.function.Fluent;
 
-public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
+public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM.t> {
 
     Monad<M, OptionM<T>> myMonad = null;
 
@@ -27,12 +27,12 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
         return (N) myMonad;
     }
 
-    private Monad<M, Monad<OptionM<?>, T>> convert(Monad<M, OptionM<T>> monad){
-        return monad.map(x->(Monad<OptionM<?>, T>)x);
+    private Monad<M, Monad<OptionM.t, T>> convert(Monad<M, OptionM<T>> monad){
+        return monad.map(x->(Monad<OptionM.t, T>)x);
     }
     
     @Override
-    public Monad<M, Monad<OptionM<?>, T>> lift() {
+    public Monad<M, Monad<OptionM.t, T>> lift() {
         return convert(myMonad);
     }
     
@@ -90,12 +90,12 @@ public class OptionT<M, T> implements MonadT<OptionT<M, ?>, M, T, OptionM<?>> {
 
         FutureM<OptionM<Integer>> foi = FutureM.sunit(OptionM.sunit(3));
         
-        OptionT<FutureM<?>, Integer> of = new OptionT<FutureM<?>, Integer>(foi);
+        OptionT<FutureM.t, Integer> of = new OptionT<FutureM.t, Integer>(foi);
 
-        OptionT<FutureM<?>, Integer> of2 = of.map(x -> x + 4);
+        OptionT<FutureM.t, Integer> of2 = of.map(x -> x + 4);
 
-        OptionT<FutureM<?>, Integer> of3 = of2.flatMap(x -> {
-            return new OptionT<FutureM<?>, Integer>(FutureM.sunit(OptionM.sunit(x + 13)));
+        OptionT<FutureM.t, Integer> of3 = of2.flatMap(x -> {
+            return new OptionT<FutureM.t, Integer>(FutureM.sunit(OptionM.sunit(x + 13)));
         });
 
         of3.map(println);

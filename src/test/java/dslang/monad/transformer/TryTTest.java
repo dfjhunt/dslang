@@ -11,13 +11,13 @@ import dslang.util.Probe;
 
 public class TryTTest {
 
-    public static <X> OptionT<TryT<FutureM<?>, ?>, X> helper(X val) {
+    public static <X> OptionT<TryT<FutureM.t, ?>, X> helper(X val) {
         return OptionT.of(TryT.of(FutureM.sunit(val)));
     }
 
     @Test
     public void test2LayerTransformerMap() {
-        OptionT<TryT<FutureM<?>, ?>, Integer> temp = helper(3);
+        OptionT<TryT<FutureM.t, ?>, Integer> temp = helper(3);
         temp = temp.map(x -> x + 1);
         Probe<Integer> p = new Probe<>();
         temp = temp.map(p::set);
@@ -27,21 +27,21 @@ public class TryTTest {
 
     @Test
     public void test2LayerTransformerMapNull() {
-        OptionT<TryT<FutureM<?>, ?>, Integer> temp = helper(3);
+        OptionT<TryT<FutureM.t, ?>, Integer> temp = helper(3);
         temp = temp.map(x -> null);
         Probe<Integer> p = new Probe<>(-1);
         temp = temp.map(p::set);
         Assert.assertEquals((int) -1, (int) p.get());
         
         Probe<Boolean> p2 = new Probe<>();
-        TryT<FutureM<?>, Boolean> tempTry = temp.lift(OptionM::isPresent);
+        TryT<FutureM.t, Boolean> tempTry = temp.lift(OptionM::isPresent);
         tempTry.map(p2::set);
         Assert.assertFalse(p2.get());
     }
 
     @Test
     public void test2LayerTransformerFlatMap() {
-        OptionT<TryT<FutureM<?>, ?>, Integer> temp = helper(3);
+        OptionT<TryT<FutureM.t, ?>, Integer> temp = helper(3);
         temp = temp.flatMap(x -> helper(x + 2));
         Probe<Integer> p = new Probe<>();
         temp = temp.map(p::set);
@@ -50,7 +50,7 @@ public class TryTTest {
 
     @Test
     public void test2LayerTransformerExceptionMap(){
-        OptionT<TryT<FutureM<?>, ?>, Integer> temp = helper(3);
+        OptionT<TryT<FutureM.t, ?>, Integer> temp = helper(3);
         temp = temp.map(x->{throw new RuntimeException();});
         temp.map(x->x+3);
         

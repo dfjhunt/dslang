@@ -10,8 +10,11 @@ import dslang.functor.SplitFunctor;
 import dslang.monad.Monad;
 import dslang.monad.MonadWrapper;
 
-public class FutureM<T> implements MonadWrapper<FutureM<?>, T, CompletableFuture<T>>, SplitFunctor<Throwable, T> {
+public class FutureM<T> implements MonadWrapper<FutureM.t, T, CompletableFuture<T>>, SplitFunctor<Throwable, T> {
 
+    public static class t{
+    }
+    
     CompletableFuture<T> myFuture = null;
 
     public FutureM(CompletableFuture<T> future) {
@@ -19,7 +22,7 @@ public class FutureM<T> implements MonadWrapper<FutureM<?>, T, CompletableFuture
     }
 
     static public <S> FutureM<S> of(CompletableFuture<S> future) {
-        return new FutureM<S>(future);
+        return new FutureM<>(future);
     }
 
     public T get() throws ExecutionException, InterruptedException {
@@ -46,7 +49,7 @@ public class FutureM<T> implements MonadWrapper<FutureM<?>, T, CompletableFuture
     }
 
     @Override
-    public <U> FutureM<U> flatMap(Function<? super T, ? extends Monad<FutureM<?>, U>> mapper) {
+    public <U> FutureM<U> flatMap(Function<? super T, ? extends Monad<FutureM.t, U>> mapper) {
         Function<? super T, CompletableFuture<U>> newMapper = mapper.andThen(o -> ((FutureM<U>) o).unwrap());
         return new FutureM<U>(myFuture.thenCompose(newMapper));
     }

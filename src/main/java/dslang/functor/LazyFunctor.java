@@ -3,7 +3,7 @@ package dslang.functor;
 
 import java.util.function.Function;
 
-public abstract class LazyFunctor<OF extends Functor<OF, ?>, A> implements Functor<LazyFunctor<OF, ?>, A> {
+public abstract class LazyFunctor<OF, A> implements Functor<LazyFunctor<OF, ?>, A> {
 
     private LazyFunctor() {
 
@@ -18,7 +18,7 @@ public abstract class LazyFunctor<OF extends Functor<OF, ?>, A> implements Funct
      * @param fa - functor
      * @return
      */
-    static public <OF extends Functor<OF, ?>, A> LazyFunctor<OF, A> lift(Functor<OF, A> fa) {
+    static public <OF, A> LazyFunctor<OF, A> lift(Functor<OF, A> fa) {
         return new LazyFunctor.Hidden<OF, A, A>(fa, x -> x);
     }
 
@@ -40,7 +40,7 @@ public abstract class LazyFunctor<OF extends Functor<OF, ?>, A> implements Funct
      * @param <R>
      * @param <X>
      */
-    static class Hidden<OFI extends Functor<OFI, ?>, R, X> extends LazyFunctor<OFI, X> {
+    static class Hidden<OFI, R, X> extends LazyFunctor<OFI, X> {
         private Functor<OFI, R> _FR;
 
         private Function<R, X> _fr;

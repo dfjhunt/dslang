@@ -68,7 +68,9 @@ public class Utility {
     public static void main(String args[]) {
         Function<ListM<String>, OptionM<ListM<String>>> unit = OptionM::sunit;
 
-        OptionM<ListM<String>> t = ListM.of(Arrays.asList(1, 2, 3)).traverse(unit, i -> OptionM.of("" + i));
+        Function<Integer, OptionM<String>> temp =  i -> OptionM.of("" + i);
+        
+        OptionM<ListM<String>> t = ListM.of(Arrays.asList(1, 2, 3)).traverse(unit, temp);
 
         System.out.println(t);
 

@@ -9,10 +9,14 @@ import java.util.function.Function;
 import dslang.functor.Applicative;
 import dslang.functor.SplitFunctor;
 import dslang.monad.Monad;
+import dslang.monad.MonadTC;
 import dslang.monad.MonadWrapper;
 
-public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, SplitFunctor<Void, T> {
-
+public class OptionM<T> implements MonadWrapper<OptionM.t, T, Optional<T>>, SplitFunctor<Void, T> {
+    public static class t{
+        
+    }
+    
     Optional<T> myOption = null;
 
     public OptionM(Optional<T> option) {
@@ -28,7 +32,7 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
     }
 
     @Override
-    public <U> Monad<OptionM<?>, U> unit(U u) {
+    public <U> Monad<OptionM.t, U> unit(U u) {
         return sunit(u);
     }
 
@@ -47,7 +51,7 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
         return myOption;
     }
 
-    static public <U> Optional<U> unwrap(Monad<OptionM<?>, U> t) {
+    static public <U> Optional<U> unwrap(Monad<OptionM.t, U> t) {
         return ((OptionM<U>) t).unwrap();
     }
 
@@ -57,7 +61,7 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
     }
 
     @Override
-    public <U> OptionM<U> flatMap(Function<? super T, ? extends Monad<OptionM<?>, U>> mapper) {
+    public <U> OptionM<U> flatMap(Function<? super T, ? extends Monad<OptionM.t, U>> mapper) {
         Function<? super T, Optional<U>> newMapper = mapper.andThen(o -> ((OptionM<U>) o).unwrap());
         return new OptionM<U>(myOption.flatMap(newMapper));
     }
@@ -84,7 +88,19 @@ public class OptionM<T> implements MonadWrapper<OptionM<?>, T, Optional<T>>, Spl
     }
 
     @Override
-    public <B, C> OptionM<C> map2(Applicative<OptionM<?>, B> apb, BiFunction<T, B, C> f) {
+    public <B, C> OptionM<C> map2(Applicative<OptionM.t, B> apb, BiFunction<T, B, C> f) {
         return (OptionM<C>)MonadWrapper.super.map2(apb, f);
     }
+    
+    public static MonadTC<OptionM.t> TC = new MonadTC<OptionM.t>(){
+
+        @Override
+        public <A> Monad<t, A> unit(A a) {
+            return OptionM.sunit(a);
+        }
+
+        @Override
+        public <A, B> Monad<t, B> flatMap(Function<A, Monad<t, B>> f, Monad<t, A> ma) {
+            return ((OptionM<A>)ma).flatMap(f);
+        }};
 }

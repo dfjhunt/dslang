@@ -1,5 +1,5 @@
 
-package dslang.monad;
+package dslang;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import dslang.functor.SplitFunctor;
+import dslang.monad.Monad;
 import dslang.util.function.TriFunction;
 import dslang.util.function.checked.CheckedBiFunction;
 import dslang.util.function.checked.CheckedConsumer;
@@ -14,10 +15,8 @@ import dslang.util.function.checked.CheckedFunction;
 import dslang.util.function.checked.CheckedSupplier;
 import dslang.util.function.checked.CheckedTriFunction;
 
-public class Try<T> implements Monad<Try.t, T>, SplitFunctor<Exception, T> {
-    public static class t{
-    }
-    
+public class Try<T> implements Monad<Try<?>, T>, SplitFunctor<Exception, T> {
+
     private final Exception e;
 
     private final T value;
@@ -75,7 +74,7 @@ public class Try<T> implements Monad<Try.t, T>, SplitFunctor<Exception, T> {
     }
 
     @Override
-    public <U> Try<U> flatMap(Function<? super T, ? extends Monad<Try.t, U>> mapper) {
+    public <U> Try<U> flatMap(Function<? super T, ? extends Monad<Try<?>, U>> mapper) {
         Objects.requireNonNull(mapper);
         if (isException())
             return exception(e);

@@ -4,8 +4,10 @@ import java.util.function.Function;
 
 import dslang.util.Pair;
 
-public class State<S, A> implements Monad<State<S, ?>, A> {
-
+public class State<S, A> implements Monad<State.t<S>, A> {
+    public static class t<S>{
+    }
+    
     Function<S, Pair<A, S>> run;
 
     public State(Function<S, Pair<A, S>> run) {
@@ -45,7 +47,7 @@ public class State<S, A> implements Monad<State<S, ?>, A> {
     }
 
     @Override
-    public <U> State<S, U> flatMap(Function<? super A, ? extends Monad<State<S, ?>, U>> mapper) {
+    public <U> State<S, U> flatMap(Function<? super A, ? extends Monad<State.t<S>, U>> mapper) {
         Function<Pair<A, S>, Pair<U, S>> f = p -> p.mapPair((a, s) -> ((State<S, U>) mapper.apply(a)).run(s));
         return new State<>(s -> f.apply(run.apply(s)));
     }
